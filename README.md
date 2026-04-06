@@ -80,5 +80,4 @@ WEATHER_API_KEY=your_openweathermap_api_key_here
    * Start `npx n8n`
    * Import the `advanced-workflow.json` located in the `n8n/` folder.
 
----
-*Created with ❤️ powered by Antigravity*
+
