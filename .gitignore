@@ -1,0 +1,17 @@
+# Environments
+venv/
+env/
+__pycache__/
+
+# Databases
+*.db
+*.sqlite3
+memory.json
+
+# Environment Variables
+*.env
+.env
+
+# System Files
+.DS_Store
+Thumbs.db

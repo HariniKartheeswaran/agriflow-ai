@@ -1,0 +1,179 @@
+{
+  "name": "Advanced AgriFlow AI Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "run-agri-ai",
+        "options": {}
+      },
+      "id": "01dcffaf-cb89-4686-9146-c0ac868bd415",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        224
+      ],
+      "webhookId": "advanced-agriflow-test-hook"
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.body.risk }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "HIGH_STOCKOUT_RISK"
+            },
+            {
+              "value2": "OVERSTOCK_RISK",
+              "output": 1
+            },
+            {
+              "value2": "MEDIUM_RISK",
+              "output": 2
+            }
+          ]
+        },
+        "fallbackOutput": 3
+      },
+      "id": "6ca308ec-0ce0-45a1-899c-afaf2b5eb398",
+      "name": "Risk Router (Switch)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ntfy.sh/agriflow_ai_emergency_orders",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Title",
+              "value": "AgriFlow Emergency Alert"
+            },
+            {
+              "name": "Tags",
+              "value": "rotating_light,truck"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "String",
+        "body": "=CRITICAL: Automated supply shipment for {{$json.body.location}} has been dispatched!",
+        "options": {}
+      },
+      "id": "7bef632c-0f91-4cfe-9271-7c08b50da58b",
+      "name": "Push Notification (Ntfy.sh)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        16,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "content": "A high priority alert has been routed because stock is failing. This sends a LIVE push notification directly to your phone/browser!"
+      },
+      "id": "846ff144-b8ef-4895-8446-a535dcc535f6",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Overstock detected. This path simulates sending a an email using your Email Node to your sales team to start a massive discount campaign!"
+      },
+      "id": "2b8213ca-1704-4e0c-9b8b-88418b3aa81c",
+      "name": "Slack Alert Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "kartheeswaranharini@gmail.com",
+        "toEmail": "={{$json[\"email\"] || \"kartheeswaranharini@gmail.com\"}}",
+        "subject": "🚨 AgriFlow AI Alert",
+        "html": "=<div style=\"font-family: 'Segoe UI', Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;\">\n\n    <h2 style=\"color: #b91c1c; border-bottom: 2px solid #fecaca; padding-bottom: 12px; margin-top: 5px;\">🚨 AgriFlow AI Alert</h2>\n    \n    <div style=\"background-color: white; padding: 18px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);\">\n        <p style=\"margin: 8px 0; font-size: 16px; color: #334155;\"><b style=\"color: #0f172a;\">📍 Location:</b> {{$json.body.location}}</p>\n        <p style=\"margin: 8px 0; font-size: 16px; color: #334155;\"><b style=\"color: #0f172a;\">⚠️ Risk Level:</b> <span style=\"color: #dc2626; font-weight: bold;\">{{$json.body.risk}}</span></p>\n        <p style=\"margin: 8px 0; font-size: 16px; color: #334155;\"><b style=\"color: #0f172a;\">📢 Alert System:</b> {{$json.body.alert}}</p>\n    </div>\n\n    <div style=\"background-color: white; padding: 20px; border-radius: 8px; border-left: 5px solid #3b82f6; line-height: 1.6; font-size: 15px; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.05);\">\n        <h3 style=\"margin-top: 0; color: #1e3a8a;\">🧠 AI Decision Matrix</h3>\n        {{$json.body.decision}}\n    </div>\n\n    <div style=\"margin-top: 25px; text-align: center; color: #64748b; font-size: 13px; font-style: italic;\">\n        Statistical Confidence: {{$json.body.confidence}}<br><br>\n        Powered by AgriFlow AI Neural Engine\n    </div>\n\n</div>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        320
+      ],
+      "id": "fc21382c-ca6a-490c-9164-4e9edea82e83",
+      "name": "Send an Email",
+      "webhookId": "1b93f3b7-7acf-4380-bf0a-f7e54f285ada",
+      "credentials": {
+        "smtp": {
+          "id": "5ILvJtuVc6wfqyj4",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Risk Router (Switch)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Risk Router (Switch)": {
+      "main": [
+        [
+          {
+            "node": "Push Notification (Ntfy.sh)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8f197d8a-c786-4100-92ed-872916abedf5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "712e8636a3900ecc07ea4b267567b3279cb3a104ba29239527de115ad91a07fa"
+  },
+  "id": "kZJkPsnV8QLJjBEx",
+  "tags": []
+}

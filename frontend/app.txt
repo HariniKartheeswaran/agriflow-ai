@@ -1,0 +1,41 @@
+import streamlit as st
+import requests
+import pandas as pd
+import pydeck as pdk
+
+st.title("🌾 AgriFlow AI")
+
+location = st.selectbox("Select District", ["Thanjavur","Salem","Coimbatore"])
+
+if st.button("Run AI"):
+    res = requests.post("http://localhost:8000/run", json={"location": location})
+    result = res.json()
+
+    st.subheader("📊 Metrics")
+    df = pd.DataFrame({
+        "Metric": ["Demand","Forecast","Stock","Staff"],
+        "Value": [result["demand"],result["forecast"],result["stock"],result["staff"]]
+    })
+    st.bar_chart(df.set_index("Metric"))
+
+    st.subheader("⚠️ Risk")
+    st.write(result["risk"])
+
+    st.subheader("📊 Confidence")
+    st.progress(result["confidence"])
+
+    if "alert" in result:
+        st.error(result["alert"])
+
+    st.subheader("🧠 Decision")
+    st.write(result["decision"])
+
+    map_data = pd.DataFrame({
+        "lat":[10.7867,11.6643,11.0168],
+        "lon":[79.1378,78.1460,76.9558]
+    })
+
+    st.pydeck_chart(pdk.Deck(
+        initial_view_state=pdk.ViewState(latitude=11, longitude=78, zoom=6),
+        layers=[pdk.Layer("ScatterplotLayer",data=map_data,get_position='[lon, lat]',get_radius=50000)]
+    ))
