@@ -108,7 +108,7 @@
     {
       "parameters": {
         "fromEmail": "kartheeswaranharini@gmail.com",
-        "toEmail": "={{$json[\"email\"] || \"kartheeswaranharini@gmail.com\"}}",
+        "toEmail": "={{ $('Webhook').item.json.body.email }}",
         "subject": "🚨 AgriFlow AI Alert",
         "html": "=<div style=\"font-family: 'Segoe UI', Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;\">\n\n    <h2 style=\"color: #b91c1c; border-bottom: 2px solid #fecaca; padding-bottom: 12px; margin-top: 5px;\">🚨 AgriFlow AI Alert</h2>\n    \n    <div style=\"background-color: white; padding: 18px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);\">\n        <p style=\"margin: 8px 0; font-size: 16px; color: #334155;\"><b style=\"color: #0f172a;\">📍 Location:</b> {{$json.body.location}}</p>\n        <p style=\"margin: 8px 0; font-size: 16px; color: #334155;\"><b style=\"color: #0f172a;\">⚠️ Risk Level:</b> <span style=\"color: #dc2626; font-weight: bold;\">{{$json.body.risk}}</span></p>\n        <p style=\"margin: 8px 0; font-size: 16px; color: #334155;\"><b style=\"color: #0f172a;\">📢 Alert System:</b> {{$json.body.alert}}</p>\n    </div>\n\n    <div style=\"background-color: white; padding: 20px; border-radius: 8px; border-left: 5px solid #3b82f6; line-height: 1.6; font-size: 15px; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.05);\">\n        <h3 style=\"margin-top: 0; color: #1e3a8a;\">🧠 AI Decision Matrix</h3>\n        {{$json.body.decision}}\n    </div>\n\n    <div style=\"margin-top: 25px; text-align: center; color: #64748b; font-size: 13px; font-style: italic;\">\n        Statistical Confidence: {{$json.body.confidence}}<br><br>\n        Powered by AgriFlow AI Neural Engine\n    </div>\n\n</div>\n",
         "options": {}
@@ -169,7 +169,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "8f197d8a-c786-4100-92ed-872916abedf5",
+  "versionId": "1949e9a4-f21b-460e-aa35-37bcc009f84a",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "712e8636a3900ecc07ea4b267567b3279cb3a104ba29239527de115ad91a07fa"
